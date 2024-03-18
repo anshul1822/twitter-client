@@ -24,55 +24,54 @@ interface TwitterLayoutProps {
 interface TwitterSideBarButton {
   title: string;
   icon: React.ReactNode;
-  link: string
+  link: string;
 }
-
-
 
 const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
   const { user } = useCurrentUSer();
 
   const queryClient = useQueryClient();
 
-  const sideBarMenuItems : TwitterSideBarButton[] = useMemo(() => 
-    [
-        {
-          title: "Home",
-          icon: <MdHomeFilled />,
-          link :'/'
-        },
-        {
-          title: "Explore",
-          icon: <CiSearch />,
-          link :'/'
-        },
-        {
-          title: "Notifications",
-          icon: <MdOutlineNotifications />,
-          link :'/'
-        },
-        {
-          title: "Messages",
-          icon: <TiMessages />,
-          link :'/'
-        },
-        {
-          title: "Communities",
-          icon: <MdGroups />,
-          link :'/'
-        },
-        {
-          title: "Profile",
-          icon: <FaUser />,
-          link :`/${user?.id}`
-        },
-        {
-          title: "More",
-          icon: <RxHamburgerMenu />,
-          link :'/'
-        },
-      ]
-  ,[user?.id]);
+  const sideBarMenuItems: TwitterSideBarButton[] = useMemo(
+    () => [
+      {
+        title: "Home",
+        icon: <MdHomeFilled />,
+        link: "/",
+      },
+      {
+        title: "Explore",
+        icon: <CiSearch />,
+        link: "/",
+      },
+      {
+        title: "Notifications",
+        icon: <MdOutlineNotifications />,
+        link: "/",
+      },
+      {
+        title: "Messages",
+        icon: <TiMessages />,
+        link: "/",
+      },
+      {
+        title: "Communities",
+        icon: <MdGroups />,
+        link: "/",
+      },
+      {
+        title: "Profile",
+        icon: <FaUser />,
+        link: `/${user?.id}`,
+      },
+      {
+        title: "More",
+        icon: <RxHamburgerMenu />,
+        link: "/",
+      },
+    ],
+    [user?.id]
+  );
 
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
@@ -92,7 +91,9 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
       if (verifyGoogleToken)
         window.localStorage.setItem("twitter_token", verifyGoogleToken);
 
-      await queryClient.invalidateQueries(["current-user"] as InvalidateQueryFilters);
+      await queryClient.invalidateQueries([
+        "current-user",
+      ] as InvalidateQueryFilters);
     },
     []
   );
@@ -107,19 +108,19 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
           <div>
             <ul className="text-xl mt-1 font-semibold gap-3">
               {sideBarMenuItems.map((item) => (
-                <li
-                  key={item.title}
-                >
-                  
-                  <Link   href={item.link} className="flex justify-start items-center w-fit gap-4 my-2 p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-all">
-                  <span className="text-xl lg:text-3xl">{item.icon}</span>
-                  <span className="hidden lg:inline">{item.title}</span>
+                <li key={item.title}>
+                  <Link
+                    href={item.link}
+                    className="flex justify-start items-center w-fit gap-4 my-2 p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-all"
+                  >
+                    <span className="text-xl lg:text-3xl">{item.icon}</span>
+                    <span className="hidden lg:inline">{item.title}</span>
                   </Link>
                 </li>
               ))}
             </ul>
             <div className="hidden lg:inline lg:mt-8 lg:pr-10">
-              <button className="bg-[#1d9bf0] w-full p-2 text-lg font-bold rounded-full">
+              <button className="bg-[#1d9bf0] w-[90%] p-2 text-lg font-bold rounded-full">
                 Tweet
               </button>
             </div>
@@ -144,14 +145,14 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
           )}
         </div>
         <div className="col-span-10 lg:col-span-6 border-r-[1px] border-l-[1px] border-slate-800 h-screen overflow-scroll custom-scrollbar">
-        <div className="lg:hidden">
-                {!user && (
-                  <div className="border p-5 bg-slate-700 rounded-lg">
-                    <h1>New To Twitter?</h1>
-                    <GoogleLogin onSuccess={handleLoginWithGoogle} />
-                  </div>
-                )}
+          <div className="lg:hidden">
+            {!user && (
+              <div className="border p-5 bg-slate-700 rounded-lg">
+                <h1>New To Twitter?</h1>
+                <GoogleLogin onSuccess={handleLoginWithGoogle} />
               </div>
+            )}
+          </div>
           {props.children}
         </div>
 
