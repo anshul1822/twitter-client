@@ -20,8 +20,40 @@ graphql(`
             firstName
             email
             lastName
-            profileImage
+            profileImage 
+            tweets{
+                id
+                content
+                author{
+                    firstName
+                    lastName
+                    profileImage
+                }
+            }
           }
     }
 `
 );
+
+export const getUserByIdQuery = 
+graphql(`
+#graphql
+query GetUserById($id: ID!) {
+    getUserById(id: $id) {
+      firstName
+      lastName
+      profileImage
+      tweets {
+        content
+        imageURL
+        author {
+          id
+          firstName
+          lastName
+          profileImage
+        }
+      }
+    }
+  }
+
+`);

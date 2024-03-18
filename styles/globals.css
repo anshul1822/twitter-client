@@ -30,3 +30,7 @@ body {
 .custom-scrollbar {
   scrollbar-width: none; /* Removes scrollbar on Firefox */
 }
+
+*:focus {
+  outline: none;
+}
