@@ -20,3 +20,10 @@ graphql(`
     }
 `
 );
+
+export const getSignedURLForTweetQuery = 
+graphql(`#graphql
+query GetSignedURLForTweetQuery($imageType: String!, $imageName: String) {
+    getSignedURLForTweet(imageType: $imageType, imageName: $imageName)
+  }`
+);

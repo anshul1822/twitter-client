@@ -18,7 +18,8 @@ import { useCreateTweet, useGetAllTweets } from "@/hooks/tweet";
 import { Tweet } from "@/gql/graphql";
 import TwitterLayout from "@/components/Layout/TwitterLayout";
 import { GetServerSideProps } from "next";
-import { getAllTweetsQuery } from "@/graphql/query/tweet";
+import { getAllTweetsQuery, getSignedURLForTweetQuery } from "@/graphql/query/tweet";
+import axios from 'axios';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,19 +36,58 @@ export default function Home(props: HomeProps) {
 
   const queryClient = useQueryClient();
   const [content, setContent] = useState("");
+  const [imageURL, setImageURL] = useState("");
+
+  const {tweets = props.tweets as Tweet[]} = useGetAllTweets();
+
+  const handleInputChangeFile = useCallback( (input : HTMLInputElement) => {
+    return async (event : Event) => {
+      event.preventDefault();
+      console.log(input.files);
+
+      const file : File | null | undefined = input.files?.item(0);
+      if(!file) return;
+
+      const {getSignedURLForTweet} = await graphqlClient.request(getSignedURLForTweetQuery, {imageType : file.type , imageName : file.name});
+
+      if(getSignedURLForTweet){
+        //call axios to add to server
+        toast.loading('Uploading....', {id : '2'});
+        await axios.put(getSignedURLForTweet, file, {
+          headers : {
+            'Content-Type' : file.type
+          }
+        })
+        toast.success('Upload Completed', {id : '2'});
+        const url = new URL(getSignedURLForTweet);
+        const myFile = `${url.origin}${url.pathname}`;
+        setImageURL(myFile);
+      }
+
+    }
+  }, [])
 
   const handleSelectImage = useCallback(() => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
+
+    const handleFn = handleInputChangeFile(input);
+
+    input.addEventListener('change', handleFn);
+
     input.click();
-  }, []);
+
+  }, [handleInputChangeFile]);
 
   const handleCreateTweet = useCallback(() => {
     mutate({
       content: content,
+      imageURL
     });
-  }, [content, mutate]);
+    setContent('');
+    setImageURL('');
+  }, [content, mutate, imageURL]);
 
   return (
     <>
@@ -74,6 +114,16 @@ export default function Home(props: HomeProps) {
                   rows={4}
                   placeholder={`What's Happening`}
                 ></textarea>
+                {
+                  imageURL && 
+                  <Image 
+                  src={imageURL}
+                  height={50}
+                  width={100}
+                  alt={'Image'}
+                  />
+
+                }
                 <div className="mt-2 flex justify-between items-center">
                   <FaImage onClick={handleSelectImage} className="text-lg" />
                   <button
@@ -86,7 +136,7 @@ export default function Home(props: HomeProps) {
               </div>
             </div>
           </div>
-          {props.tweets?.map((tweet) =>
+          {tweets?.map((tweet) =>
             tweet ? <FeedCard key={tweet?.id} data={tweet as Tweet} /> : null
           )}
         </div>
