@@ -29,6 +29,7 @@ interface TwitterSideBarButton {
 
 const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
   const { user } = useCurrentUSer();
+  console.log('user', user);
 
   const queryClient = useQueryClient();
 
@@ -157,12 +158,49 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
         </div>
 
         <div className="hidden lg:inline lg:col-span-3">
-          {!user && (
+          {/* {!user && (
             <div className="border p-5 bg-slate-700 rounded-lg">
               <h1>New To Twitter?</h1>
               <GoogleLogin onSuccess={handleLoginWithGoogle} />
             </div>
           )}
+          
+          {
+            user?.recommendedUsers?.map((el) => <div key={el?.id}> {el?.firstName} </div>)
+          } */}
+
+          {
+            // user?.recommendedUsers?.length > 0  && 
+
+            <div className="mx-2 px-4 py-3 bg-slate-800 rounded-lg">
+            <h1 className="my-2 text-xl mb-5">Users you may know</h1>
+            {user?.recommendedUsers?.slice(0, 5).map((el) => (
+              <div className="flex items-center gap-3 mt-2" key={el?.id}>
+                {el?.profileImage && (
+                  <Image
+                    src={el?.profileImage}
+                    alt="user-image"
+                    className="rounded-full"
+                    width={60}
+                    height={60}
+                  />
+                )}
+                <div>
+                  <div className="text-lg">
+                    {el?.firstName} {el?.lastName}
+                  </div>
+                  <Link
+                    href={`/${el?.id}`}
+                    className="bg-white text-black text-sm px-5 py-1 w-full rounded-lg"
+                  >
+                    View
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+          }
+
         </div>
       </div>
     </div>

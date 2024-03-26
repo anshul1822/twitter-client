@@ -13,13 +13,14 @@ import toast, { Toaster } from "react-hot-toast";
 import { graphqlClient } from "@/clients/api";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import { useCurrentUSer } from "@/hooks/user";
-import { useQueryClient } from "@tanstack/react-query";
+import { InvalidateQueryFilters, useQueryClient } from "@tanstack/react-query";
 import { useCreateTweet, useGetAllTweets } from "@/hooks/tweet";
 import { Tweet } from "@/gql/graphql";
 import TwitterLayout from "@/components/Layout/TwitterLayout";
 import { GetServerSideProps } from "next";
 import { getAllTweetsQuery, getSignedURLForTweetQuery } from "@/graphql/query/tweet";
 import axios from 'axios';
+import LoginPage from "@/components/Layout/LoginPage";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -89,6 +90,8 @@ export default function Home(props: HomeProps) {
     setImageURL('');
   }, [content, mutate, imageURL]);
 
+  if(user)
+{
   return (
     <>
       <TwitterLayout>
@@ -143,11 +146,26 @@ export default function Home(props: HomeProps) {
       </TwitterLayout>
     </>
   );
+}else{
+  return (
+    <>
+    <LoginPage />
+    </>
+  )
+}
+
+
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (
   context
 ) => {
+
+  const id = context?.query?.id as string | undefined;
+
+  if (!id) return { props: { tweets: [] } };
+
+  
   const tweets = await graphqlClient.request(getAllTweetsQuery);
 
   return {

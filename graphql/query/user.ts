@@ -30,6 +30,24 @@ graphql(`
                     profileImage
                 }
             }
+            followings {
+              id
+              firstName
+              lastName
+              profileImage
+            }
+            followers {
+              id
+              firstName
+              lastName
+              profileImage
+            }
+            recommendedUsers{
+              id
+              firstName
+              lastName
+              profileImage
+            }
           }
     }
 `
@@ -40,9 +58,22 @@ graphql(`
 #graphql
 query GetUserById($id: ID!) {
     getUserById(id: $id) {
+      id
       firstName
       lastName
       profileImage
+      followings {
+        id
+        firstName
+        lastName
+        profileImage
+      }
+      followers {
+        id
+        firstName
+        lastName
+        profileImage
+      }
       tweets {
         content
         imageURL
@@ -52,6 +83,12 @@ query GetUserById($id: ID!) {
           lastName
           profileImage
         }
+      }
+      recommendedUsers{
+        id
+        firstName
+        lastName
+        profileImage
       }
     }
   }
