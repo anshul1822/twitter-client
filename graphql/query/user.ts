@@ -94,3 +94,10 @@ query GetUserById($id: ID!) {
   }
 
 `);
+
+export const logoutUserQuery = graphql(`
+#graphql
+  query LogoutUser{
+    logoutUser
+  }
+`);

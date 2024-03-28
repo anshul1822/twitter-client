@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { graphqlClient } from "@/clients/api";
 import { Tweet } from "@/gql/graphql";
-import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
+import { logoutUserQuery, verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import { useGetAllTweets, useCreateTweet } from "@/hooks/tweet";
 import { useCurrentUSer } from "@/hooks/user";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
@@ -9,7 +9,7 @@ import { InvalidateQueryFilters, useQueryClient } from "@tanstack/react-query";
 import React, { useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { BsTwitter } from "react-icons/bs";
-import { CiSearch } from "react-icons/ci";
+import { CiLogout, CiSearch } from "react-icons/ci";
 import { FaUser, FaImage } from "react-icons/fa6";
 import { MdGroups, MdHomeFilled, MdOutlineNotifications } from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -69,7 +69,7 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
         title: "More",
         icon: <RxHamburgerMenu />,
         link: "/",
-      },
+      }
     ],
     [user?.id]
   );
@@ -98,6 +98,14 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
     },
     []
   );
+
+  const handleLogout = async () => {
+    await graphqlClient.request(logoutUserQuery); //clears all redis caching in backend
+    window.localStorage.removeItem('twitter_token');
+    await queryClient.clear(); //clear all client-caching 
+    window.location.reload();
+    window.location.href = '/';
+  }
 
   return (
     <div>
@@ -128,6 +136,11 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
           </div>
           {user && user.profileImage && (
             <div className="absolute bottom-5">
+               <button onClick={handleLogout} className="flex justify-center items-center bg-[#1a4766] px-2 lg:px-3 py-2 my-2 text-md font-bold rounded-full">
+                <span className="hidden lg:inline">Logout</span>
+                <span>  <CiLogout className="text-xl lg:text-3xl" /> </span>
+              </button>
+
               <div className="flex gap-2 items-center bg-slate-700 rounded-full">
                 <Image
                   src={user.profileImage}
