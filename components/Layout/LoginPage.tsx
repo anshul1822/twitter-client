@@ -57,7 +57,7 @@ const LoginPage = () => {
                 </div>
               </div>
               <p className="text-center text-sm text-gray-600">
-                Don't have an account? Sign up for free.
+                Don&apos;t have an account? Sign up for free.
               </p>
             </div>
           </div>
