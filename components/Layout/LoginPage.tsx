@@ -32,7 +32,7 @@ const LoginPage = () => {
         "current-user",
       ] as InvalidateQueryFilters);
     },
-    []
+    [queryClient]
   );
 
   return (
