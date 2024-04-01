@@ -29,7 +29,7 @@ interface TwitterSideBarButton {
 
 const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
   const { user } = useCurrentUSer();
-  console.log('user', user);
+  // console.log('user', user);
 
   const queryClient = useQueryClient();
 
